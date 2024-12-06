@@ -8,7 +8,7 @@ class EvolutionCalculator:
     def __init__(self, ions_num: int):
         self._ions_num = ions_num
 
-    def create_v_matrix(self, red_couplings: np.array, blue_couplings: np.array) -> np.array:
+    def create_v_matrix(self, red_couplings: np.ndarray, blue_couplings: np.ndarray) -> np.ndarray:
         if len(red_couplings) != self._ions_num:
             raise f"The size of red couplings array should be {self._ions_num}"
         if len(blue_couplings) != self._ions_num:
@@ -22,7 +22,17 @@ class EvolutionCalculator:
 
         return np.array(rows)
 
-    def _get_coupling(self, couplings: np.array, i: int, j: int):
+    def calculate_ms_values_and_vectors(self, v_matrix: np.ndarray) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+        v_matrix_dag: np.ndarray = np.transpose(np.conj(v_matrix))
+
+        m1: np.ndarray = np.dot(v_matrix, v_matrix_dag)
+        m2: np.ndarray = np.dot(v_matrix_dag, v_matrix)
+
+        A_U, A_S, A_Vh = np.linalg.svd(m1)
+        B_U, B_S, B_Vh = np.linalg.svd(m2)
+        return A_U, A_S, B_U, B_S
+
+    def _get_coupling(self, couplings: np.ndarray, i: int, j: int):
         diff: int = j - i
         # Check if the difference is power of 2
         if diff <= 0 or (diff & (diff - 1) != 0):
