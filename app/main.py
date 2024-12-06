@@ -15,16 +15,21 @@ def main():
     min_distance: float = 100.0
     distance: float = min_distance
     min_array: np.ndarray
+    A_S: np.ndarray
+    A_U: np.ndarray
 
     while distance >= accuracy:
         array = np.array((np.rint(range*np.random.rand(2*ion_num)) + 1.j*np.rint(range*np.random.rand(2*ion_num)) if is_complex else np.rint(range*np.random.rand(6))))
-        distance = f(array, desired_array)
+        distance, A_S, A_U = f(array, desired_array)
         if distance < min_distance:
             min_distance = distance
             min_array = array
 
     print(f"min_array = {min_array}")
     print(f"min_distance = {min_distance}")
+
+    display_vector(A_S)
+    display_matrix(A_U)
 
 def f(red_blue: np.ndarray, desired: np.ndarray):
     red_blue_split = np.split(red_blue, 2)
@@ -36,7 +41,7 @@ def f(red_blue: np.ndarray, desired: np.ndarray):
 
     reflection_vector = A_U[:, 1]
     distnce = 1-np.absolute(np.dot(desired, reflection_vector)/(np.linalg.norm(desired)*np.linalg.norm(reflection_vector)))
-    return distnce
+    return distnce, A_S, A_U
 
 
 def display_matrix(matrix: np.ndarray):
@@ -45,7 +50,7 @@ def display_matrix(matrix: np.ndarray):
     w = 10
     h = 10
     plt.figure(1, figsize=(w, h))
-    tb = plt.table(cellText=matrix, loc=(0, 0), cellLoc='center')
+    tb = plt.table(cellText=np.round(matrix, 2), loc=(0, 0), cellLoc='center')
 
     tc = tb.properties()['celld']
     for cell in tc.values():
@@ -64,7 +69,7 @@ def display_vector(vector: np.ndarray):
     w = 10
     h = 1
     plt.figure(1, figsize=(w, h))
-    tb = plt.table(cellText=[vector], loc=(0, 0), cellLoc='center')
+    tb = plt.table(cellText=[np.round(vector, 2)], loc=(0, 0), cellLoc='center')
 
     tc = tb.properties()['celld']
     for cell in tc.values():
