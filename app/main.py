@@ -8,8 +8,8 @@ from app.evolution_calculator import EvolutionCalculator
 def main():
     desired_array: np.ndarray = [0.5, 0, 0, 0.5, 0, 0.5, 0.5, 0]
     ion_num: int = 3
-    is_complex: bool = False
-    accuracy: float = 10e-5
+    is_complex: bool = True
+    accuracy: float = 10e-3
     range: int = 10
 
     min_distance: float = 100.0
@@ -40,7 +40,7 @@ def f(red_blue: np.ndarray, desired: np.ndarray):
     A_U, A_S, B_U, B_S = calc.calculate_ms_values_and_vectors(v_matrix)
 
     reflection_vector = A_U[:, 1]
-    distnce = 1-np.absolute(np.dot(desired, reflection_vector)/(np.linalg.norm(desired)*np.linalg.norm(reflection_vector)))
+    distnce = 1-np.linalg.norm(np.dot(np.transpose(np.conj(desired)), reflection_vector)/(np.linalg.norm(desired)*np.linalg.norm(reflection_vector)))
     return distnce, A_S, A_U
 
 
