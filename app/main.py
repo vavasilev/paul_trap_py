@@ -9,7 +9,7 @@ def main():
 
 
 def find_couplings():
-    desired_array: np.ndarray = [0.5, 0, 0, 0.5, 0, 0.5, 0.5, 0]
+    desired_array: np.ndarray = [0, 0.5, 0.5, 0, 0.5, 0, 0, 0.5]
     ion_num: int = 3
     is_complex: bool = False
     accuracy: float = 10e-4
@@ -22,8 +22,8 @@ def find_couplings():
     A_U: np.ndarray
 
     while distance >= accuracy:
-        array = np.array((np.rint(coupling_range * np.random.rand(2 * ion_num)) + 1.j * np.rint(
-            coupling_range * np.random.rand(2 * ion_num)) if is_complex else np.rint(coupling_range * np.random.rand(6))))
+        array = np.array((np.rint(2*coupling_range * np.random.rand(2 * ion_num)-np.repeat(coupling_range, 2 * ion_num)) + 1.j * np.rint(
+            2*coupling_range * np.random.rand(2 * ion_num)-np.repeat(coupling_range, 2 * ion_num)) if is_complex else np.rint(2*coupling_range * np.random.rand(2 * ion_num)-np.repeat(coupling_range, 2 * ion_num))))
         distance, A_S, A_U = f(array, desired_array)
         if distance < min_distance:
             min_distance = distance
@@ -44,7 +44,7 @@ def f(red_blue: np.ndarray, desired: np.ndarray):
     v_matrix: np.ndarray = calc.create_v_matrix(red_couplings, blue_couplings)
     A_U, A_S, B_U, B_S = calc.calculate_ms_values_and_vectors(v_matrix)
 
-    reflection_vector = A_U[:, 1]
+    reflection_vector = A_U[:, 0]
     distnce = 1 - np.linalg.norm(np.dot(np.transpose(np.conj(desired)), reflection_vector) / (
                 np.linalg.norm(desired) * np.linalg.norm(reflection_vector)))
     return distnce, A_S, A_U
